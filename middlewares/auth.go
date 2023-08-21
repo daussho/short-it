@@ -21,5 +21,6 @@ func Auth(ctx *fiber.Ctx) error {
 		return ctx.Redirect("/admin/login")
 	}
 
+	ctx.Locals("user", user)
 	return ctx.Next()
 }

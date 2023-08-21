@@ -14,4 +14,5 @@ func AdminRoutes(app *fiber.App) {
 
 	// Login
 	adminRoute.Get("/", admin.Dashboard)
+	adminRoute.Post("/add-url", admin.AddUrl)
 }

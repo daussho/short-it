@@ -6,7 +6,7 @@ import (
 
 	"github.com/daussho/short-it/configs"
 	"github.com/daussho/short-it/configs/routes"
-	"github.com/daussho/short-it/models"
+	"github.com/daussho/short-it/handlers"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/template/html/v2"
 	"github.com/joho/godotenv"
@@ -39,15 +39,7 @@ func main() {
 	// routes
 	routes.AdminRoutes(app)
 
-	app.Get("/:shortUrl", func(c *fiber.Ctx) error {
-
-		db := configs.ConnectDB()
-
-		var url models.Url
-		db.Where("short_url = ?", c.Params("shortUrl")).First(&url)
-
-		return c.Redirect(url.Url)
-	})
+	app.Get("/:shortUrl", handlers.UrlRedirect)
 
 	port := os.Getenv("APP_PORT")
 	if port == "" {
