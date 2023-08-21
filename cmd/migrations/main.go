@@ -6,8 +6,12 @@ import (
 )
 
 func main() {
+	err := configs.InitDB()
+	if err != nil {
+		panic(err)
+	}
 	db := configs.ConnectDB()
 
-	db.Migrator().DropTable(models.Url{})
+	db.AutoMigrate(&models.User{})
 	db.AutoMigrate(&models.Url{})
 }

@@ -5,4 +5,4 @@ run-http:
 	@go run cmd/http/main.go
 run-http-nodemon:
 	@echo "Running HTTP server with nodemon"
-	@nodemon -e go,html --signal SIGTERM --exec 'make' run-http
+	@nodemon -e go,html --signal SIGTERM --exec 'make run-http || exit 1' 

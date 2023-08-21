@@ -2,10 +2,13 @@ package admin
 
 import (
 	"log"
-	"os"
+	"time"
 
 	"github.com/daussho/short-it/configs"
+	"github.com/daussho/short-it/models"
+	"github.com/daussho/short-it/utils"
 	"github.com/gofiber/fiber/v2"
+	"golang.org/x/crypto/bcrypt"
 )
 
 func Login(ctx *fiber.Ctx) error {
@@ -22,6 +25,7 @@ func Login(ctx *fiber.Ctx) error {
 func loginGet(ctx *fiber.Ctx) error {
 	return ctx.Render("admin/login", fiber.Map{
 		"title": "Login",
+		"error": ctx.Query("error"),
 	}, "layouts/main")
 }
 
@@ -32,20 +36,28 @@ func loginPost(ctx *fiber.Ctx) error {
 	log.Println(username, password)
 
 	// check if username and password is correct
-	envUsername := os.Getenv("ADMIN_USER")
-	envPassword := os.Getenv("ADMIN_PASS")
-
-	if username == envUsername && password == envPassword {
-		// set session
-		session, err := configs.GetSession(ctx)
-		if err != nil {
-			return err
-		}
-
-		session.Set("isLoggedIn", true)
-
-		return ctx.Redirect("/admin")
+	db := configs.ConnectDB()
+	var user models.User
+	db.Find(&user, "username = ?", username)
+	if user.ID == 0 {
+		return ctx.Redirect("/admin/login?error=username not found")
 	}
 
-	return ctx.Redirect("/admin/login")
+	// check if password is correct
+	err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(password))
+	if err != nil {
+		return ctx.Redirect("/admin/login?error=incorrect password")
+	}
+
+	token := utils.RandStringRunes(64)
+	user.Token = token
+	db.Save(&user)
+
+	ctx.Cookie(&fiber.Cookie{
+		Name:    "token",
+		Value:   token,
+		Expires: time.Now().Add(7 * 24 * time.Hour),
+	})
+
+	return ctx.Redirect("/admin")
 }

@@ -2,6 +2,7 @@ package main
 
 import (
 	"log"
+	"os"
 
 	"github.com/daussho/short-it/configs"
 	"github.com/daussho/short-it/configs/routes"
@@ -48,5 +49,9 @@ func main() {
 		return c.Redirect(url.Url)
 	})
 
-	app.Listen(":3000")
+	port := os.Getenv("APP_PORT")
+	if port == "" {
+		port = "3000"
+	}
+	app.Listen(":" + port)
 }
