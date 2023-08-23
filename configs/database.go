@@ -2,6 +2,7 @@ package configs
 
 import (
 	"log"
+	"os"
 
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
@@ -21,9 +22,15 @@ var (
 )
 
 func InitDB() error {
+	isProduction := os.Getenv("APP_ENV") == "production"
+	gormLogLevel := logger.Error
+	if !isProduction {
+		gormLogLevel = logger.Info
+	}
+
 	dbTemp, err := gorm.Open(sqlite.Open("short-it.db"), &gorm.Config{
 		QueryFields: true,
-		Logger:      logger.Default.LogMode(logger.Info),
+		Logger:      logger.Default.LogMode(gormLogLevel),
 	})
 	if err != nil {
 		return err
