@@ -4,6 +4,7 @@ import (
 	"github.com/daussho/short-it/configs"
 	"github.com/daussho/short-it/models"
 	"github.com/gofiber/fiber/v2"
+	"gorm.io/gorm"
 )
 
 func UrlRedirect(ctx *fiber.Ctx) error {
@@ -15,8 +16,7 @@ func UrlRedirect(ctx *fiber.Ctx) error {
 		return ctx.Redirect("/")
 	}
 
-	url.ViewCount++
-	db.Save(&url)
+	db.Model(&url).Update("view_count", gorm.Expr("view_count + ?", 1))
 
 	return ctx.Redirect(url.Url)
 }
