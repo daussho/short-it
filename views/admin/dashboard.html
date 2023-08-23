@@ -21,6 +21,15 @@
         </div>
 
         <div class="box" style="overflow-y: scroll">
+          <input
+            type="text"
+            name=""
+            id=""
+            placeholder="Search"
+            class="input"
+            x-model="data.urlParams.search"
+            @input.debounce="getUrls"
+          />
           <table class="table" style="width: 100%">
             <thead>
               <tr>
@@ -92,13 +101,18 @@
           formData: {
             url: "",
           },
+          urlParams: {
+            search: "",
+          },
           urls: [],
         },
         init: function () {
           this.getUrls();
         },
         getUrls: async function () {
-          const res = await fetch("/api/v1/url");
+          const params = new URLSearchParams(this.data.urlParams).toString();
+
+          const res = await fetch(`/api/v1/url?${params}`);
           const { data } = await res.json();
 
           this.data.urls = data;
