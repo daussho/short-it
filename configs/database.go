@@ -22,7 +22,8 @@ var (
 
 func InitDB() error {
 	dbTemp, err := gorm.Open(sqlite.Open("short-it.db"), &gorm.Config{
-		Logger: logger.Default.LogMode(logger.Info),
+		QueryFields: true,
+		Logger:      logger.Default.LogMode(logger.Info),
 	})
 	if err != nil {
 		return err
