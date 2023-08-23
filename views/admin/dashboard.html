@@ -4,7 +4,7 @@
       <div class="column is-2-desktop"></div>
       <div class="column is-8-desktop">
         <div class="box">
-          <form x-init="" @submit.prevent="submitForm" action="">
+          <form @submit.prevent="submitForm" action="">
             <div class="field">
               <input
                 name="url"
@@ -27,6 +27,7 @@
                 <th>Short Url</th>
                 <th>Long Url</th>
                 <th>View Count</th>
+                <th>Actions</th>
               </tr>
             </thead>
             <tbody>
@@ -43,6 +44,14 @@
                     <a :href="url.url" target="_blank" x-text="url.url"></a>
                   </td>
                   <td x-text="url.viewCount"></td>
+                  <td>
+                    <button
+                      class="button is-danger is-small"
+                      @click="showDeleteModal(url.id, url.shortUrl)"
+                    >
+                      <i class="fa fa-trash" aria-hidden="true"></i>
+                    </button>
+                  </td>
                 </tr>
               </template>
             </tbody>
@@ -53,10 +62,33 @@
     </div>
   </div>
 
+  <div x-show="data.isShowDeleteModal" class="modal is-clipped is-active">
+    <div class="card">
+      <div class="card-content">
+        <div class="content">
+          <p>Delete <span x-text="data.deleteModal.url"></span>?</p>
+          <div class="is-flex is-justify-content-flex-end">
+            <div class="">
+              <button class="button is-danger" @click="deleteUrl">Yes</button>
+              <button class="button" @click="data.isShowDeleteModal = false">
+                No
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <script>
     function app() {
       return {
         data: {
+          isShowDeleteModal: false,
+          deleteModal: {
+            id: 0,
+            url: "",
+          },
           formData: {
             url: "",
           },
@@ -84,6 +116,22 @@
           });
 
           this.data.formData.url = "";
+          this.getUrls();
+        },
+        showDeleteModal: function (id, url) {
+          this.data.deleteModal = {
+            id,
+            url,
+          };
+
+          this.data.isShowDeleteModal = true;
+        },
+        deleteUrl: async function () {
+          const res = await fetch(`/api/v1/url/${this.data.deleteModal.id}`, {
+            method: "DELETE",
+          });
+
+          this.data.isShowDeleteModal = false;
           this.getUrls();
         },
       };

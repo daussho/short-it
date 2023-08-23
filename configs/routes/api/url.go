@@ -12,4 +12,5 @@ func UrlRoutes(app *fiber.App) {
 
 	route.Get("/", urlHandler.GetUserUrls)
 	route.Post("/", urlHandler.AddUrl)
+	route.Delete("/:id", urlHandler.DeleteUrl)
 }
