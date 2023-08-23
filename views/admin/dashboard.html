@@ -1,4 +1,4 @@
-<div class="box" style="height: 100vh;">
+<div class="box" style="height: 100vh">
   <div class="columns">
     <div class="column is-2-desktop"></div>
     <div class="column is-8-desktop">
@@ -22,16 +22,23 @@
               <th>View Count</th>
             </tr>
           </thead>
-          <tbody>
-            {{range .urls}}
-            <tr>
-              <td>
-                <a href="/{{.ShortUrl}}" target="_blank">{{.ShortUrl}}</a>
-              </td>
-              <td><a href="{{.Url}}" target="_blank">{{.Url}}</a></td>
-              <td>{{.ViewCount}}</td>
-            </tr>
-            {{end}}
+          <tbody
+            x-data="{ urls: [1,2,3]}"
+            x-init="urls = (await (await fetch('/api/v1/url')).json()).data"
+          >
+            <template x-for="url in urls">
+              <tr>
+                <td>
+                  <a
+                    :href="`/${url.shortUrl}`"
+                    target="_blank"
+                    x-text="url.shortUrl"
+                  ></a>
+                </td>
+                <td><a :href="url.url" target="_blank" x-text="url.url"></a></td>
+                <td x-text="url.viewCount"></td>
+              </tr>
+            </template>
           </tbody>
         </table>
       </div>

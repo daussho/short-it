@@ -6,6 +6,7 @@ import (
 
 	"github.com/daussho/short-it/configs"
 	"github.com/daussho/short-it/configs/routes"
+	apiRoutes "github.com/daussho/short-it/configs/routes/api"
 	"github.com/daussho/short-it/handlers"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/template/html/v2"
@@ -39,6 +40,9 @@ func main() {
 	// admin routes
 	routes.AdminRoutes(app)
 
+	// api routes
+	apiRoutes.UrlRoutes(app)
+
 	// 404 page
 	app.Get("/404", func(c *fiber.Ctx) error {
 		return c.Render("404", fiber.Map{
@@ -48,7 +52,13 @@ func main() {
 
 	app.Get("/:shortUrl<len(6)>", handlers.UrlRedirect)
 
-	// catch all routes to 404
+	// catch all api routes to 404
+	app.Get("/api/*", func(c *fiber.Ctx) error {
+		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
+			"message": "Not Found",
+		})
+	})
+
 	app.Get("/*", func(c *fiber.Ctx) error {
 		return c.Redirect("/404")
 	})

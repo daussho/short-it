@@ -1,7 +1,6 @@
 package admin
 
 import (
-	"log"
 	"time"
 
 	"github.com/daussho/short-it/configs"
@@ -33,7 +32,6 @@ func loginPost(ctx *fiber.Ctx) error {
 	// get username and password from form
 	username := ctx.FormValue("username")
 	password := ctx.FormValue("password")
-	log.Println(username, password)
 
 	// check if username and password is correct
 	db := configs.ConnectDB()
