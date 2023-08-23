@@ -1,48 +1,92 @@
-<div class="box" style="height: 100vh">
-  <div class="columns">
-    <div class="column is-2-desktop"></div>
-    <div class="column is-8-desktop">
-      <div class="box">
-        <form action="/admin/add-url" method="POST">
-          <div class="field">
-            <input name="url" class="input" type="text" placeholder="URL" />
-          </div>
-          <div class="field">
-            <button class="button is-primary">Shorten</button>
-          </div>
-        </form>
-      </div>
+<div x-data="app()" x-init="init">
+  <div class="box" style="height: 100vh">
+    <div class="columns">
+      <div class="column is-2-desktop"></div>
+      <div class="column is-8-desktop">
+        <div class="box">
+          <form x-init="" @submit.prevent="submitForm" action="">
+            <div class="field">
+              <input
+                name="url"
+                class="input"
+                type="text"
+                placeholder="URL"
+                x-model="data.formData.url"
+              />
+            </div>
+            <div class="field">
+              <button class="button is-primary">Shorten</button>
+            </div>
+          </form>
+        </div>
 
-      <div class="box" style="overflow-y: scroll">
-        <table class="table" style="width: 100%">
-          <thead>
-            <tr>
-              <th>Short Url</th>
-              <th>Long Url</th>
-              <th>View Count</th>
-            </tr>
-          </thead>
-          <tbody
-            x-data="{ urls: [1,2,3]}"
-            x-init="urls = (await (await fetch('/api/v1/url')).json()).data"
-          >
-            <template x-for="url in urls">
+        <div class="box" style="overflow-y: scroll">
+          <table class="table" style="width: 100%">
+            <thead>
               <tr>
-                <td>
-                  <a
-                    :href="`/${url.shortUrl}`"
-                    target="_blank"
-                    x-text="url.shortUrl"
-                  ></a>
-                </td>
-                <td><a :href="url.url" target="_blank" x-text="url.url"></a></td>
-                <td x-text="url.viewCount"></td>
+                <th>Short Url</th>
+                <th>Long Url</th>
+                <th>View Count</th>
               </tr>
-            </template>
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              <template x-for="url in data.urls">
+                <tr>
+                  <td>
+                    <a
+                      :href="`/${url.shortUrl}`"
+                      target="_blank"
+                      x-text="url.shortUrl"
+                    ></a>
+                  </td>
+                  <td>
+                    <a :href="url.url" target="_blank" x-text="url.url"></a>
+                  </td>
+                  <td x-text="url.viewCount"></td>
+                </tr>
+              </template>
+            </tbody>
+          </table>
+        </div>
       </div>
+      <div class="column is-2-desktop"></div>
     </div>
-    <div class="column is-2-desktop"></div>
   </div>
+
+  <script>
+    function app() {
+      return {
+        data: {
+          formData: {
+            url: "",
+          },
+          urls: [],
+        },
+        init: function () {
+          this.getUrls();
+        },
+        getUrls: async function () {
+          const res = await fetch("/api/v1/url");
+          const { data } = await res.json();
+
+          this.data.urls = data;
+        },
+        submitForm: async function () {
+          // send data to server
+          const res = await fetch("/api/v1/url", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              url: this.data.formData.url,
+            }),
+          });
+
+          this.data.formData.url = "";
+          this.getUrls();
+        },
+      };
+    }
+  </script>
 </div>

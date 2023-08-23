@@ -11,4 +11,5 @@ func UrlRoutes(app *fiber.App) {
 	route := app.Group("/api/v1/url", middlewares.AuthJSON)
 
 	route.Get("/", urlHandler.GetUserUrls)
+	route.Post("/", urlHandler.AddUrl)
 }
