@@ -9,3 +9,6 @@ run-http-nodemon:
 run-migration:
 	@echo "Running migration"
 	@go run cmd/migrations/main.go
+build-http:
+	@echo "Building HTTP server"
+	@go build -o bin/short-it cmd/http/main.go
