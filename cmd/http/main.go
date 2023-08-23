@@ -36,11 +36,24 @@ func main() {
 		Views: engine,
 	})
 
-	// routes
+	// admin routes
 	routes.AdminRoutes(app)
 
-	app.Get("/:shortUrl", handlers.UrlRedirect)
+	// 404 page
+	app.Get("/404", func(c *fiber.Ctx) error {
+		return c.Render("404", fiber.Map{
+			"title": "404",
+		}, "layouts/main")
+	})
 
+	app.Get("/:shortUrl<len(6)>", handlers.UrlRedirect)
+
+	// catch all routes to 404
+	app.Get("/*", func(c *fiber.Ctx) error {
+		return c.Redirect("/404")
+	})
+
+	// get port from env
 	port := os.Getenv("APP_PORT")
 	if port == "" {
 		port = "3000"
