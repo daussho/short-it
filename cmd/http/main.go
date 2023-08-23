@@ -1,13 +1,13 @@
 package main
 
 import (
+	"errors"
 	"log"
 	"os"
 
 	"github.com/daussho/short-it/configs"
-	"github.com/daussho/short-it/configs/routes"
 	apiRoutes "github.com/daussho/short-it/configs/routes/api"
-	"github.com/daussho/short-it/handlers"
+	webRoutes "github.com/daussho/short-it/configs/routes/web"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/template/html/v2"
 	"github.com/joho/godotenv"
@@ -34,34 +34,11 @@ func main() {
 
 	// init fiber app
 	app := fiber.New(fiber.Config{
-		Views: engine,
+		Views:        engine,
+		ErrorHandler: errorHandler,
 	})
-
-	// admin routes
-	routes.AdminRoutes(app)
-
-	// api routes
-	apiRoutes.UrlRoutes(app)
-
-	// 404 page
-	app.Get("/404", func(c *fiber.Ctx) error {
-		return c.Render("404", fiber.Map{
-			"title": "404",
-		}, "layouts/main")
-	})
-
-	app.Get("/:shortUrl<len(6)>", handlers.UrlRedirect)
-
-	// catch all api routes to 404
-	app.Get("/api/*", func(c *fiber.Ctx) error {
-		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
-			"message": "Not Found",
-		})
-	})
-
-	app.Get("/*", func(c *fiber.Ctx) error {
-		return c.Redirect("/404")
-	})
+	apiRoutes.Init(app)
+	webRoutes.Init(app)
 
 	// get port from env
 	port := os.Getenv("APP_PORT")
@@ -69,4 +46,23 @@ func main() {
 		port = "3000"
 	}
 	app.Listen(":" + port)
+}
+
+func errorHandler(ctx *fiber.Ctx, err error) error {
+	// Status code defaults to 500
+	code := fiber.StatusInternalServerError
+
+	// Retrieve the custom status code if it's a *fiber.Error
+	var e *fiber.Error
+	if errors.As(err, &e) {
+		code = e.Code
+	}
+
+	// Set Content-Type: text/plain; charset=utf-8
+	if code == fiber.StatusNotFound {
+		return ctx.Redirect("/404")
+	}
+
+	log.Fatalf("Error: %v", err)
+	return ctx.Status(code).SendString("Internal Server Error")
 }

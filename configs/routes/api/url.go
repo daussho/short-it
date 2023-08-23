@@ -6,7 +6,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-func UrlRoutes(app *fiber.App) {
+func urlRoutes(app *fiber.App) {
 
 	route := app.Group("/api/v1/url", middlewares.AuthJSON)
 

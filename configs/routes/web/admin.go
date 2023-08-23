@@ -1,4 +1,4 @@
-package routes
+package web
 
 import (
 	"github.com/daussho/short-it/handlers/admin"
@@ -6,7 +6,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-func AdminRoutes(app *fiber.App) {
+func adminRoutes(app *fiber.App) {
 	app.Get("/admin/login", admin.Login)
 	app.Post("/admin/login", admin.Login)
 
