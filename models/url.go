@@ -11,7 +11,7 @@ type Url struct {
 	Url         string         `json:"url"`
 	ShortUrl    string         `json:"shortUrl" gorm:"uniqueIndex"`
 	ViewCount   int64          `json:"viewCount"`
-	OwnerUserID int64          `json:"ownerUserId" gorm:"index"`
+	OwnerUserID uint           `json:"ownerUserId" gorm:"index"`
 	CreatedAt   time.Time      `json:"createdAt"`
 	UpdatedAt   time.Time      `json:"updatedAt"`
 	DeletedAt   gorm.DeletedAt `json:"deletedAt" gorm:"index"`

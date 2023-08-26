@@ -38,8 +38,7 @@ func main() {
 }
 
 func migration0001() {
-	db.AutoMigrate(&models.User{})
-	db.AutoMigrate(&models.Url{})
+	db.AutoMigrate(&models.User{}, &models.Url{})
 }
 
 func migration0002() {

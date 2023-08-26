@@ -47,7 +47,7 @@ func loginPost(ctx *fiber.Ctx) error {
 		return ctx.Redirect("/admin/login?error=incorrect password")
 	}
 
-	token := utils.RandStringRunes(64)
+	token := utils.RandStringRunes(models.TOKEN_LENGTH)
 	user.Token = token
 	db.Save(&user)
 
