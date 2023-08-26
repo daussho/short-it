@@ -6,7 +6,7 @@ import (
 	"os"
 
 	"github.com/daussho/short-it/configs"
-	apiRoutes "github.com/daussho/short-it/configs/routes/api"
+	apiV1Routes "github.com/daussho/short-it/configs/routes/api/v1"
 	webRoutes "github.com/daussho/short-it/configs/routes/web"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/template/html/v2"
@@ -37,7 +37,7 @@ func main() {
 		Views:        engine,
 		ErrorHandler: errorHandler,
 	})
-	apiRoutes.Init(app)
+	apiV1Routes.Init(app)
 	webRoutes.Init(app)
 
 	// get port from env

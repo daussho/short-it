@@ -1,4 +1,4 @@
-package api
+package v1
 
 import (
 	urlHandler "github.com/daussho/short-it/handlers/api/url"
@@ -6,9 +6,8 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-func urlRoutes(app *fiber.App) {
-
-	route := app.Group("/api/v1/url", middlewares.AuthJSON)
+func urlRoutes(app fiber.Router) {
+	route := app.Group("/url", middlewares.AuthJSON)
 
 	route.Get("/", urlHandler.GetUserUrls)
 	route.Post("/", urlHandler.AddUrl)
