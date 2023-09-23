@@ -28,17 +28,13 @@ func InitDB() error {
 		gormLogLevel = logger.Info
 	}
 
-	dbTemp, err := gorm.Open(sqlite.Open("short-it.db"), &gorm.Config{
+	var err error
+	db, err = gorm.Open(sqlite.Open("short-it.db"), &gorm.Config{
 		QueryFields: true,
 		Logger:      logger.Default.LogMode(gormLogLevel),
 	})
-	if err != nil {
-		return err
-	}
 
-	db = dbTemp
-
-	return nil
+	return err
 }
 
 func ConnectDB() *gorm.DB {
