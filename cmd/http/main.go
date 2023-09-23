@@ -60,7 +60,9 @@ func errorHandler(ctx *fiber.Ctx, err error) error {
 
 	// Set Content-Type: text/plain; charset=utf-8
 	if code == fiber.StatusNotFound {
-		return ctx.Redirect("/404")
+		return ctx.Render("404", fiber.Map{
+			"title": "404",
+		}, "layouts/main")
 	}
 
 	log.Fatalf("Error: %v", err)
