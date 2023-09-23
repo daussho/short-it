@@ -72,23 +72,33 @@
     </div>
   </div>
 
-  <div x-show="data.isShowDeleteModal" class="modal is-clipped is-active">
-    <div class="card">
-      <div class="card-content">
-        <div class="content">
-          <p>Delete <span x-text="data.deleteModal.url"></span>?</p>
-          <div class="is-flex is-justify-content-flex-end">
-            <div class="">
-              <button class="button is-danger" @click="deleteUrl">Yes</button>
-              <button class="button" @click="data.isShowDeleteModal = false">
-                No
-              </button>
-            </div>
-          </div>
+  <template x-if="data.isShowDeleteModal">
+    <div class="modal is-clipped is-active">
+      <div class="modal-background"></div>
+      <div class="modal-content">
+        <div class="modal-card">
+          <header class="modal-card-head">
+            <p class="modal-card-title">Delete</p>
+            <button
+              class="delete"
+              aria-label="close"
+              @click="data.isShowDeleteModal = false"
+            ></button>
+          </header>
         </div>
+        <section class="modal-card-body">
+          <p>Delete <span x-text="data.deleteModal.url"></span>?</p>
+        </section>
+
+        <footer class="modal-card-foot align-right">
+          <button class="button is-danger" @click="deleteUrl">Yes</button>
+          <button class="button" @click="data.isShowDeleteModal = false">
+            No
+          </button>
+        </footer>
       </div>
     </div>
-  </div>
+  </template>
 
   <script>
     function app() {
@@ -113,7 +123,11 @@
         getUrls: async function () {
           const params = new URLSearchParams(this.data.urlParams).toString();
 
-          const res = await fetch(`/api/v1/url?${params}`);
+          const res = await fetch(`/api/v1/url?${params}`, {
+            headers: {
+              accept: "application/json",
+            },
+          });
           const { data } = await res.json();
 
           this.data.urls = data;
